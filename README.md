@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎭 Emotion Based Music Playlist Generator
 
 An AI-powered web application that detects human emotions from a webcam feed and automatically generates a music playlist using Spotify API.
@@ -150,3 +151,7 @@ If you want next upgrade, I can help you:
 - 🎥 :contentReference[oaicite:3]{index=3}
 
 
+=======
+# Emotion-Based-Music-Playlist
+Emotion Based Music Playlist Generator
+>>>>>>> b4e5632cbcfb680e9dcdcd38b2dd8bc7761ae861

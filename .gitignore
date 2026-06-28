@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# Cache
+.cache/
+
+# Virtual environments (if exist locally)
+venv/
+.venv/
+env/
+
+# OS files
+.DS_Store
+
+# Models (optional)
+*.h5

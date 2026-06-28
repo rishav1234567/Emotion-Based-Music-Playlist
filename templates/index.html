@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion-Based Music Playlist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .video-feed {
+            margin: 20px auto;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .warning {
+            color: red;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Emotion-Based Music Playlist</h1>
+
+    {# Video feed for emotion detection #}
+    <div class="video-feed">
+        <img src="{{ url_for('video_feed') }}" alt="Video Feed" width="600" onerror="this.src='https://via.placeholder.com/600x400?text=Video+Feed+Failed'; this.alt='Failed to load video feed';">
+    </div>
+
+    {# Spotify login if no access token #}
+    {% if not access_token %}
+        <a href="{{ url_for('login') }}">Login to Spotify</a>
+    {% else %}
+        <p>Connected to Spotify</p>
+        <p class="warning">Note: Spotify Premium is required to play tracks.</p>
+    {% endif %}
+
+    {# Playlist table #}
+    <table>
+        <thead>
+            <tr>
+                {% for heading in headings %}
+                    <th>{{ heading }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% if data.empty %}
+                <tr><td colspan="4">No playlist data available. Check CSV files.</td></tr>
+            {% else %}
+                {% for row in data.itertuples() %}
+                    <tr>
+                        <td>{{ row.Name }}</td>
+                        <td>{{ row.Album }}</td>
+                        <td>{{ row.Artist }}</td>
+                        <td>
+                            {% if access_token and row.URI %}
+                                <button onclick="playTrack('{{ row.URI }}', '{{ access_token }}')">Play</button>
+                            {% else %}
+                                <span>Login or regenerate CSVs to play</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+    <script>
+        function playTrack(trackUri, accessToken) {
+            fetch('/play', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    track_uri: trackUri,
+                    access_token: accessToken
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error playing track: ' + error);
+            });
+        }
+    </script>
+</body>
+</html>
